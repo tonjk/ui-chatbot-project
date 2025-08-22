@@ -56,7 +56,7 @@ def save_config():
         logo_filepath = ""
         if logo_file and allowed_file(logo_file.filename):
             logo_filename = secure_filename(logo_file.filename)
-            logo_filename = f"{bot_name}_logo.{logo_filename.rsplit('.', 1)[1].lower()}"
+            logo_filename = f"{bot_name}_logo.{logo_filename.rsplit('.', 1)[1].lower()}".replace(" ", "+")
             logo_file.seek(0)
             logo_filepath = s3_upload_file(logo_file, logo_filename)
         
@@ -67,7 +67,7 @@ def save_config():
         template_path = ""
         if template_file and allowed_file(template_file.filename):
             template_filename = secure_filename(template_file.filename)
-            template_filename = f"{bot_name}_template.{template_filename.rsplit('.', 1)[1].lower()}"
+            template_filename = f"{bot_name}_template.{template_filename.rsplit('.', 1)[1].lower()}".replace(" ", "+")
             template_file.seek(0)
             template_path = s3_upload_file(template_file, template_filename)
             
