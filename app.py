@@ -53,7 +53,7 @@ def save_config():
 
         # Handle logo upload
         logo_file = request.files.get('bot_logo')
-        logo_filename = 'N/A'
+        logo_filepath = ""
         if logo_file and allowed_file(logo_file.filename):
             logo_filename = secure_filename(logo_file.filename)
             logo_filename = f"{bot_name}_logo.{logo_filename.rsplit('.', 1)[1].lower()}"
@@ -64,6 +64,7 @@ def save_config():
         template_file = request.files.get('template_file')
         template_filename = template_file.filename if template_file else 'N/A'
         qa_pairs = []
+        template_path = ""
         if template_file and allowed_file(template_file.filename):
             template_filename = secure_filename(template_file.filename)
             template_filename = f"{bot_name}_template.{template_filename.rsplit('.', 1)[1].lower()}"
