@@ -136,6 +136,10 @@ def save_config():
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok"}), 200
 
 # --- RUN THE APP ---
 if __name__ == '__main__':
