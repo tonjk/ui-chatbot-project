@@ -35,6 +35,7 @@ def s3_upload_file(file_obj, filename, bucket=S3_BUCKET_NAME):
         key = f"data_file/{filename}"
         s3.upload_fileobj(file_obj, bucket, key, ExtraArgs={'ContentType': content_type})
         logger.info(f"✅ Uploaded: {filename} -> s3://{bucket}/{key}")
+        return f"https://{bucket}.s3.{AWS_REGION}.amazonaws.com/{key}"
     elif ext in ('.png', '.jpg', '.jpeg', '.gif'):
         content_type = {
             '.png': 'image/png',
@@ -45,6 +46,7 @@ def s3_upload_file(file_obj, filename, bucket=S3_BUCKET_NAME):
         key = f"logo/{filename}"
         s3.upload_fileobj(file_obj, bucket, key, ExtraArgs={'ContentType': content_type})
         logger.info(f"✅ Uploaded: {filename} -> s3://{bucket}/{key}")
+        return f"https://{bucket}.s3.{AWS_REGION}.amazonaws.com/{key}"
     else:
         logger.warning(f"❌ Unsupported file type: {filename}")
         return
