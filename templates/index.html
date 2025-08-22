@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure AI Chatbot</title>
+    <style>
+        /* --- Google Font Import --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        /* --- General Styles & Resets --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for longer forms */
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* --- Main Configuration Container --- */
+        .config-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px B20px rgba(0, 0, 0, 0.05);
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        /* --- Header --- */
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #1a202c;
+            text-align: center;
+        }
+
+        /* --- Form Grouping --- */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        /* --- Labels --- */
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        
+        .label-hint {
+            font-weight: 400;
+            font-size: 12px;
+            color: #718096;
+            margin-left: 5px;
+        }
+
+        /* --- Input Fields & Text Area --- */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            color: #2d3748;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* --- Uploader Styles (Logo & File) --- */
+        .drop-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 100%;
+            min-height: 150px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .drop-zone:hover {
+            border-color: #4299e1;
+            background-color: #f7fafc;
+        }
+        .drop-zone-placeholder {
+            text-align: center;
+            color: #718096;
+        }
+        .drop-zone-placeholder svg {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+            stroke: #a0aec0;
+        }
+        #logo-preview {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain; padding: 10px; background-color: #fff;
+        }
+        .file-name-display {
+            font-weight: 500; color: #2d3748;
+        }
+        .hidden { display: none; }
+
+        /* --- Tab Styles for Chat Template --- */
+        .template-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px; /* Overlap with container border */
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .tab-btn:hover { color: #2d3748; }
+        .tab-btn.active { color: #2c5282; border-color: #2c5282; }
+
+        /* --- Dynamic Key-Value & Q&A Styles --- */
+        .dynamic-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            align-items: start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .dynamic-pair.qa-pair {
+            grid-template-areas: "q q btn" "a a a";
+            grid-template-columns: 1fr auto;
+        }
+        .qa-pair .question-input { grid-area: q; }
+        .qa-pair .answer-input { grid-area: a; }
+        .qa-pair .remove-btn { grid-area: btn; align-self: center;}
+        
+        .add-btn, .remove-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-weight: 500;
+        }
+        .add-btn {
+            width: 100%; padding: 10px; border: 1px solid #e2e8f0;
+            background-color: #f7fafc; color: #2d3748; font-size: 14px; margin-top: 5px;
+        }
+        .add-btn:hover { background-color: #e2e8f0; }
+        .add-btn svg { width: 18px; height: 18px; margin-right: 8px; }
+        
+        .remove-btn {
+            flex-shrink: 0; width: 44px; height: 44px;
+            border: 1px solid #e2e8f0; background-color: #fff;
+        }
+        .remove-btn:hover { background-color: #edf2f7; border-color: #cbd5e0; }
+        .remove-btn svg { width: 20px; height: 20px; stroke: #718096; }
+
+        /* --- Google Sheets Configuration Styles --- */
+        .credentials-section {
+            margin-bottom: 15px;
+        }
+        .spreadsheet-config {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+        .test-btn {
+            padding: 12px 20px;
+            background-color: #4299e1;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .test-btn:hover { background-color: #3182ce; }
+        .connection-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .connection-status.success {
+            background-color: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .connection-status.error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        /* --- Submit Button --- */
+        .submit-btn {
+            width: 100%; padding: 15px; background-color: #2c5282;
+            color: #ffffff; border: none; border-radius: 8px; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+        .submit-btn:hover { background-color: #2a4365; }
+    </style>
+</head>
+<body>
+
+    <div class="config-container">
+        <h1>Configure AI Chatbot</h1>
+        <form id="chatbot-form">
+            <!-- Google Sheets Configuration Section -->
+            <!-- <div class="form-group">
+                <label>Google Sheets Configuration <span class="label-hint">(Required for data storage)</span></label>
+                <div class="credentials-section">
+                    <input type="file" id="credentials-upload" name="credentials" accept=".json" class="hidden">
+                    <label for="credentials-upload" class="drop-zone">
+                        <div id="credentials-placeholder" class="drop-zone-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Upload Google Service Account JSON</span>
+                        </div>
+                        <div id="credentials-name-display" class="file-name-display hidden"></div>
+                    </label>
+                </div>
+                <div class="spreadsheet-config">
+                    <input type="text" id="spreadsheet-id" name="spreadsheet_id" placeholder="Google Spreadsheet ID (e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms)">
+                    <button type="button" id="test-connection-btn" class="test-btn">Test Connection</button>
+                </div>
+                <div id="connection-status" class="connection-status hidden"></div>
+            </div> -->
+
+            <!-- Bot Name & Logo Side-by-Side -->
+            <div class="form-group">
+                <label for="bot-name">Bot Name</label>
+                <input type="text" id="bot-name" name="bot_name" placeholder="e.g., Customer Support Pro">
+            </div>
+
+            <!-- Logo Upload Field -->
+            <div class="form-group">
+                <label for="logo-upload">Bot Logo</label>
+                <input type="file" id="logo-upload" name="bot_logo" accept="image/*" class="hidden">
+                <label for="logo-upload" class="drop-zone">
+                    <img id="logo-preview" src="#" alt="Logo Preview" class="hidden">
+                    <div id="logo-placeholder" class="drop-zone-placeholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <span>Click to upload or drag & drop</span>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- Greeting Message & Persona -->
+            <div class="form-group">
+                <label for="greeting-message">Greeting Message</label>
+                <input type="text" id="greeting-message" name="greeting_message" placeholder="e.g., Hello! How can I help you today?">
+            </div>
+            <div class="form-group">
+                <label for="persona">Persona <span class="label-hint">(Define its personality, tone, and rules)</span></label>
+                <textarea id="persona" name="persona" placeholder="e.g., You are a friendly and professional assistant..."></textarea>
+            </div>
+            
+            <!-- Chat Template Section -->
+            <div class="form-group">
+                <label>Chat Template <span class="label-hint">(Provide Q&A data for the bot)</span></label>
+                <div class="template-tabs">
+                    <button type="button" class="tab-btn active" data-target="#upload-section">Upload Excel</button>
+                    <button type="button" class="tab-btn" data-target="#manual-section">Manual Input</button>
+                </div>
+                <div class="template-content">
+                    <!-- Upload Excel Section -->
+                    <div id="upload-section">
+                        <input type="file" id="template-upload" name="template_file" accept=".xlsx, .xls, .csv" class="hidden">
+                        <label for="template-upload" class="drop-zone">
+                            <div id="file-placeholder" class="drop-zone-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <span>Upload an .xlsx or .csv file</span>
+                            </div>
+                            <div id="file-name-display" class="file-name-display hidden"></div>
+                        </label>
+                    </div>
+                    <!-- Manual Input Section -->
+                    <div id="manual-section" class="hidden">
+                        <div id="qa-container">
+                            <!-- Dynamic Q&A pairs will be inserted here -->
+                        </div>
+                        <button type="button" id="add-qa-btn" class="add-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Add Question & Answer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Configuration Field -->
+            <div class="form-group">
+                <label>Additional Configuration <span class="label-hint">(Key-Value Pairs)</span></label>
+                <div id="additional-config-container"></div>
+                <button type="button" id="add-config-btn" class="add-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add Key-Value Pair
+                </button>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Configuration</button>
+        </form>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // --- All your existing logic for logo preview, tabs, dynamic fields, etc. ---
+    // --- remains unchanged. Paste it all here first.                 ---
+
+    // --- LOGO PREVIEW LOGIC (from original file) ---
+    const logoUploadInput = document.getElementById('logo-upload');
+    const logoPreviewImg = document.getElementById('logo-preview');
+    const logoPlaceholder = document.getElementById('logo-placeholder');
+    logoUploadInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                logoPreviewImg.src = e.target.result;
+                logoPreviewImg.classList.remove('hidden');
+                logoPlaceholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // --- TAB SWITCHING LOGIC (from original file) ---
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.template-content > div');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            tabContents.forEach(content => content.classList.add('hidden'));
+            document.querySelector(button.dataset.target).classList.remove('hidden');
+        });
+    });
+
+    // --- TEMPLATE FILE UPLOAD LOGIC (from original file) ---
+    const templateUploadInput = document.getElementById('template-upload');
+    const filePlaceholder = document.getElementById('file-placeholder');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    templateUploadInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            fileNameDisplay.textContent = `Selected file: ${file.name}`;
+            fileNameDisplay.classList.remove('hidden');
+            filePlaceholder.classList.add('hidden');
+        }
+    });
+
+    // --- DYNAMIC Q&A PAIR LOGIC (from original file) ---
+    const addQaBtn = document.getElementById('add-qa-btn');
+    const qaContainer = document.getElementById('qa-container');
+    addQaBtn.addEventListener('click', function () {
+        const pairDiv = document.createElement('div');
+        pairDiv.className = 'dynamic-pair qa-pair';
+
+        const questionInput = document.createElement('input');
+        questionInput.type = 'text';
+        questionInput.name = 'questions[]';
+        questionInput.placeholder = 'Question';
+        questionInput.className = 'question-input';
+
+        const answerInput = document.createElement('textarea');
+        answerInput.name = 'answers[]';
+        answerInput.placeholder = 'Answer';
+        answerInput.className = 'answer-input';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+        removeBtn.addEventListener('click', () => pairDiv.remove());
+        
+        pairDiv.appendChild(questionInput);
+        pairDiv.appendChild(answerInput);
+        pairDiv.appendChild(removeBtn);
+        qaContainer.appendChild(pairDiv);
+        questionInput.focus();
+    });
+
+    // --- DYNAMIC KEY-VALUE PAIR LOGIC (from original file) ---
+    const addConfigBtn = document.getElementById('add-config-btn');
+    const configContainer = document.getElementById('additional-config-container');
+    addConfigBtn.addEventListener('click', function () {
+        const pairDiv = document.createElement('div');
+        pairDiv.className = 'dynamic-pair';
+        
+        const keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.name = 'config_keys[]';
+        keyInput.placeholder = 'Key (e.g., api_version)';
+        
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.name = 'config_values[]';
+        valueInput.placeholder = 'Value (e.g., v2.1)';
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+        removeBtn.addEventListener('click', () => pairDiv.remove());
+
+        pairDiv.appendChild(keyInput);
+        pairDiv.appendChild(valueInput);
+        pairDiv.appendChild(removeBtn);
+        configContainer.appendChild(pairDiv);
+        keyInput.focus();
+    });
+
+    // --- NEW: FORM SUBMISSION LOGIC ---
+    const form = document.getElementById('chatbot-form');
+    const submitBtn = form.querySelector('.submit-btn');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Stop the default browser submission
+
+        // Provide user feedback
+        const originalButtonText = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+
+        fetch('/save-config', {
+            method: 'POST',
+            body: formData, // No need to set Content-Type, browser does it for FormData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Success! Your configuration has been saved to the Google Sheet.');
+                form.reset(); // Optionally reset the form
+                // Reset file previews manually
+                logoPreviewImg.classList.add('hidden');
+                logoPlaceholder.classList.remove('hidden');
+                fileNameDisplay.classList.add('hidden');
+                filePlaceholder.classList.remove('hidden');
+            } else {
+                alert('An error occurred: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('A network error occurred. Please check the console.');
+        })
+        .finally(() => {
+            // Restore button
+            submitBtn.textContent = originalButtonText;
+            submitBtn.disabled = false;
+        });
+    });
+});
+</script>
+
+</body>
+</html>
