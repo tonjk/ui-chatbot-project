@@ -56,8 +56,9 @@ def save_config():
         logo_filename = 'N/A'
         if logo_file and allowed_file(logo_file.filename):
             logo_filename = secure_filename(logo_file.filename)
+            logo_filename = f"{bot_name}_logo.{logo_filename.rsplit('.', 1)[1].lower()}"
             logo_file.seek(0)
-            s3_upload_file(logo_file, logo_filename)
+            logo_filepath = s3_upload_file(logo_file, logo_filename)
         
         # Handle template file upload
         template_file = request.files.get('template_file')
@@ -65,6 +66,7 @@ def save_config():
         qa_pairs = []
         if template_file and allowed_file(template_file.filename):
             template_filename = secure_filename(template_file.filename)
+            template_filename = f"{bot_name}_template.{template_filename.rsplit('.', 1)[1].lower()}"
             template_file.seek(0)
             template_path = s3_upload_file(template_file, template_filename)
             
@@ -113,7 +115,8 @@ def save_config():
             bot_name,
             greeting_message,
             persona,
-            logo_filename,
+            logo_filepath,
+            template_path,
             template_filename,
             qa_pairs,
             additional_config
