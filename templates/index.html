@@ -267,13 +267,13 @@
 
             <!-- Bot Name & Logo Side-by-Side -->
             <div class="form-group">
-                <label for="bot-name">Bot Name</label>
-                <input type="text" id="bot-name" name="bot_name" placeholder="e.g., Customer Support Pro">
+                <label for="bot-name">Bot Name <span style="color:red">*</span></label>
+                <input type="text" id="bot-name" name="bot_name" placeholder="e.g., Customer Support Pro" required>
             </div>
 
             <!-- Logo Upload Field -->
             <div class="form-group">
-                <label for="logo-upload">Bot Logo</label>
+                <label for="logo-upload">Bot Logo <span style="color:red">*</span></label>
                 <input type="file" id="logo-upload" name="bot_logo" accept="image/*" class="hidden">
                 <label for="logo-upload" class="drop-zone">
                     <img id="logo-preview" src="#" alt="Logo Preview" class="hidden">
@@ -454,6 +454,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault(); // Stop the default browser submission
+
+        // Check if logo is uploaded
+        if (!logoUploadInput.files.length) {
+            alert('Please upload a Bot Logo.');
+            submitBtn.textContent = 'Save Configuration';
+            submitBtn.disabled = false;
+            return;
+        }
 
         // Provide user feedback
         const originalButtonText = submitBtn.textContent;
